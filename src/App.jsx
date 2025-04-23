@@ -2,24 +2,60 @@ import { useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import names from "./names.json";
 import certificateBg from "./assets/Certificate.png";
 import "./App.css";
 
 function App() {
   const certRef = useRef();
+  const [names, setNames] = useState([]);
   const [index, setIndex] = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);
   const [searchUrn, setSearchUrn] = useState("");
+  const [customBg, setCustomBg] = useState(null);
+  const [nameFontSize, setNameFontSize] = useState(30);
+  const [urnFontSize, setUrnFontSize] = useState(16);
+  const [canvasWidth, setCanvasWidth] = useState(1000);  // Dynamically set width
+  const [canvasHeight, setCanvasHeight] = useState(700);  // Dynamically set height
+  const [namePosition, setNamePosition] = useState({ x: 300, y: 350 });  // Default name position
+  const [urnPosition, setUrnPosition] = useState({ x: 63, y: 640 });  // Default urn position
 
   const currentName = names[index]?.name || "No more names";
   const currentTeam = names[index]?.team || "No more teams";
-  const currentURN = names[index]?.urn || "No more urn";
+  const currentURN = names[index]?.urn || "No more uid";
 
   const nextName = () => {
     if (index < names.length - 1) {
       setIndex(index + 1);
     }
+  };
+
+  const handleBackgroundChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setCustomBg(imageUrl);
+    }
+  };
+
+  const handleJsonUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target.result);
+        if (Array.isArray(parsed)) {
+          setNames(parsed);
+          setIndex(0);
+        } else {
+          alert("Invalid JSON format. Expected an array of objects.");
+        }
+      } catch (err) {
+        alert("Failed to parse JSON.");
+      }
+    };
+    reader.readAsText(file);
   };
 
   const renderCertificate = (name, team, urn) => {
@@ -28,15 +64,55 @@ function App() {
       tempDiv.style.position = "fixed";
       tempDiv.style.left = "-9999px";
       tempDiv.className = "certificate";
-      tempDiv.style.backgroundImage = `url(${certificateBg})`;
+      tempDiv.style.width = `${canvasWidth}px`;  // Dynamically set canvas width
+      tempDiv.style.height = `${canvasHeight}px`;  // Dynamically set canvas height
+      tempDiv.style.backgroundImage = `url(${customBg || certificateBg})`;
+      tempDiv.style.backgroundSize = "cover";
+      tempDiv.style.backgroundPosition = "center";
 
       const h1 = document.createElement("h1");
       h1.className = "name";
       h1.innerText = `${name} (${team})`;
+      h1.style.fontSize = `${nameFontSize}px`;
 
       const p = document.createElement("p");
       p.className = "urn";
       p.innerText = urn;
+      p.style.fontSize = `${urnFontSize}px`;
+
+      Object.assign(h1.style, {
+        position: "absolute",
+        top: `${namePosition.y}px`,  // Dynamic positioning
+        left: `${namePosition.x}px`,
+        // width: "400px",
+        // height: "60px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        fontWeight: "bold",
+        color: "#000"
+      });
+
+      Object.assign(p.style, {
+        position: "absolute",
+        bottom: `${urnPosition.y}px`,  // Dynamic positioning
+        left: `${urnPosition.x}px`,
+        // width: "200px",
+        // height: "30px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        fontWeight: "bold",
+        color: "#000"
+      });
 
       tempDiv.appendChild(h1);
       tempDiv.appendChild(p);
@@ -52,6 +128,7 @@ function App() {
   };
 
   const handleBulkDownload = async () => {
+    if (!names.length) return alert("No names loaded.");
     setIsGenerating(true);
     const zip = new JSZip();
 
@@ -72,7 +149,7 @@ function App() {
     html2canvas(element).then((canvas) => {
       canvas.toBlob((blob) => {
         if (blob) {
-          const name = currentName.replace(/[\\/:*?"<>|]/g, "_"); // Sanitize filename
+          const name = currentName.replace(/[\\/:*?"<>|]/g, "_");
           saveAs(blob, `${name}.png`);
         }
       });
@@ -90,31 +167,99 @@ function App() {
 
   return (
     <div className="app">
-      <div className="search">
-        <input
-          type="text"
-          placeholder="Enter URN"
-          value={searchUrn}
-          onChange={(e) => setSearchUrn(e.target.value)}
-        />
-        <button onClick={handleSearch}>Search</button>
+      {/* Left side: Canvas */}
+      <div className="certificate" ref={certRef} style={{ backgroundImage: `url(${customBg || certificateBg})`, width: `${canvasWidth}px`, height: `${canvasHeight}px` }}>
+        <h1 className="name" style={{ fontSize: `${nameFontSize}px`, top: `${namePosition.y}px`, left: `${namePosition.x}px` }}>
+          {currentName} ({currentTeam})
+        </h1>
+        <p className="urn" style={{ fontSize: `${urnFontSize}px`, bottom: `${urnPosition.y}px`, left: `${urnPosition.x}px` }}>
+          {currentURN}
+        </p>
       </div>
 
-      <div
-        className="certificate"
-        ref={certRef}
-        style={{ backgroundImage: `url(${certificateBg})` }}
-      >
-        <h1 className="name">{currentName} ({currentTeam})</h1>
-        <p className="urn">{currentURN}</p>
-      </div>
+      {/* Right side: Controls */}
+      <div className="controls-container">
+        <div className="upload-bg">
+          <label>Upload Certificate Background:</label>
+          <input type="file" accept="image/*" onChange={handleBackgroundChange} />
+        </div>
 
-      <div className="buttons">
-        <button onClick={handleSingleDownload}>Download Current Certificate</button>
-        <button onClick={handleBulkDownload} disabled={isGenerating}>
-          {isGenerating ? "Generating..." : "Download All as ZIP"}
-        </button>
-        <button onClick={nextName}>Next Name</button>
+        <div className="upload-json">
+          <label>Upload Names JSON:</label>
+          <input type="file" accept=".json" onChange={handleJsonUpload} />
+        </div>
+
+        <div className="font-controls">
+          <label>
+            Name Font Size:
+            <input
+              type="number"
+              min="10"
+              max="100"
+              value={nameFontSize}
+              onChange={(e) => setNameFontSize(parseInt(e.target.value))}
+            />
+            <span>{nameFontSize}px</span>
+          </label>
+
+          <label>
+            URN Font Size:
+            <input
+              type="number"
+              min="10"
+              max="50"
+              value={urnFontSize}
+              onChange={(e) => setUrnFontSize(parseInt(e.target.value))}
+            />
+            <span>{urnFontSize}px</span>
+          </label>
+        </div>
+
+        <div className="position-controls">
+          <label>
+            Name X Position:
+            <input
+              type="number"
+              value={namePosition.x}
+              onChange={(e) => setNamePosition({ ...namePosition, x: parseInt(e.target.value) })}
+            />
+          </label>
+
+          <label>
+            Name Y Position:
+            <input
+              type="number"
+              value={namePosition.y}
+              onChange={(e) => setNamePosition({ ...namePosition, y: parseInt(e.target.value) })}
+            />
+          </label>
+
+          <label>
+            URN X Position:
+            <input
+              type="number"
+              value={urnPosition.x}
+              onChange={(e) => setUrnPosition({ ...urnPosition, x: parseInt(e.target.value) })}
+            />
+          </label>
+
+          <label>
+            URN Y Position:
+            <input
+              type="number"
+              value={urnPosition.y}
+              onChange={(e) => setUrnPosition({ ...urnPosition, y: parseInt(e.target.value) })}
+            />
+          </label>
+        </div>
+
+        <div className="buttons">
+          <button onClick={handleSingleDownload}>Download Current Certificate</button>
+          <button onClick={handleBulkDownload} disabled={isGenerating}>
+            {isGenerating ? "Generating..." : "Download All as ZIP"}
+          </button>
+          <button onClick={nextName}>Next Name</button>
+        </div>
       </div>
     </div>
   );
