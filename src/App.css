@@ -1,0 +1,61 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+.certificate {
+  width: 1000px;
+  height: 700px;
+  background-image: url('/certificate.png'); /* Make sure your image is in the public folder */
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.name {
+  font-size: 30px;
+  font-weight: bold;
+  color: #000;
+  position: absolute;
+  top: 350px;
+}
+
+.urn{
+  font-size: 15px;
+  font-weight: bold;
+  color: #000;
+  position: absolute;
+  bottom: 12px;
+  left: 63px;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+
+.search {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.search input {
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.search button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
