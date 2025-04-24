@@ -14,10 +14,10 @@ function App() {
   const [customBg, setCustomBg] = useState(null);
   const [nameFontSize, setNameFontSize] = useState(30);
   const [urnFontSize, setUrnFontSize] = useState(16);
-  const [canvasWidth, setCanvasWidth] = useState(1000);  // Dynamically set width
-  const [canvasHeight, setCanvasHeight] = useState(700);  // Dynamically set height
-  const [namePosition, setNamePosition] = useState({ x: 300, y: 350 });  // Default name position
-  const [urnPosition, setUrnPosition] = useState({ x: 63, y: 640 });  // Default urn position
+  const [canvasWidth, setCanvasWidth] = useState(1000);
+  const [canvasHeight, setCanvasHeight] = useState(700);
+  const [namePosition, setNamePosition] = useState({ x: 500, y: 350 }); // center x
+  const [urnPosition, setUrnPosition] = useState({ x: 500, y: 640 });  // center x
 
   const currentName = names[index]?.name || "No more names";
   const currentTeam = names[index]?.team || "No more teams";
@@ -64,8 +64,8 @@ function App() {
       tempDiv.style.position = "fixed";
       tempDiv.style.left = "-9999px";
       tempDiv.className = "certificate";
-      tempDiv.style.width = `${canvasWidth}px`;  // Dynamically set canvas width
-      tempDiv.style.height = `${canvasHeight}px`;  // Dynamically set canvas height
+      tempDiv.style.width = `${canvasWidth}px`;
+      tempDiv.style.height = `${canvasHeight}px`;
       tempDiv.style.backgroundImage = `url(${customBg || certificateBg})`;
       tempDiv.style.backgroundSize = "cover";
       tempDiv.style.backgroundPosition = "center";
@@ -73,45 +73,31 @@ function App() {
       const h1 = document.createElement("h1");
       h1.className = "name";
       h1.innerText = `${name} (${team})`;
-      h1.style.fontSize = `${nameFontSize}px`;
+      Object.assign(h1.style, {
+        position: "absolute",
+        top: `${namePosition.y}px`,
+        left: `${namePosition.x}px`,
+        transform: "translate(-50%, -50%)",
+        fontSize: `${nameFontSize}px`,
+        fontWeight: "bold",
+        color: "#000",
+        whiteSpace: "nowrap",
+        textAlign: "center"
+      });
 
       const p = document.createElement("p");
       p.className = "urn";
       p.innerText = urn;
-      p.style.fontSize = `${urnFontSize}px`;
-
-      Object.assign(h1.style, {
-        position: "absolute",
-        top: `${namePosition.y}px`,  // Dynamic positioning
-        left: `${namePosition.x}px`,
-        // width: "400px",
-        // height: "60px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        fontWeight: "bold",
-        color: "#000"
-      });
-
       Object.assign(p.style, {
         position: "absolute",
-        bottom: `${urnPosition.y}px`,  // Dynamic positioning
+        top: `${urnPosition.y}px`,
         left: `${urnPosition.x}px`,
-        // width: "200px",
-        // height: "30px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
+        transform: "translate(-50%, -50%)",
+        fontSize: `${urnFontSize}px`,
         fontWeight: "bold",
-        color: "#000"
+        color: "#000",
+        whiteSpace: "nowrap",
+        textAlign: "center"
       });
 
       tempDiv.appendChild(h1);
@@ -167,17 +153,50 @@ function App() {
 
   return (
     <div className="app">
-      {/* Left side: Canvas */}
-      <div className="certificate" ref={certRef} style={{ backgroundImage: `url(${customBg || certificateBg})`, width: `${canvasWidth}px`, height: `${canvasHeight}px` }}>
-        <h1 className="name" style={{ fontSize: `${nameFontSize}px`, top: `${namePosition.y}px`, left: `${namePosition.x}px` }}>
+      <div
+        className="certificate"
+        ref={certRef}
+        style={{
+          backgroundImage: `url(${customBg || certificateBg})`,
+          width: `${canvasWidth}px`,
+          height: `${canvasHeight}px`,
+          position: "relative"
+        }}
+      >
+        <h1
+          className="name"
+          style={{
+            position: "absolute",
+            top: `${namePosition.y}px`,
+            left: `${namePosition.x}px`,
+            transform: "translate(-50%, -50%)",
+            fontSize: `${nameFontSize}px`,
+            fontWeight: "bold",
+            color: "#000",
+            whiteSpace: "nowrap",
+            textAlign: "center"
+          }}
+        >
           {currentName} ({currentTeam})
         </h1>
-        <p className="urn" style={{ fontSize: `${urnFontSize}px`, bottom: `${urnPosition.y}px`, left: `${urnPosition.x}px` }}>
+        <p
+          className="urn"
+          style={{
+            position: "absolute",
+            top: `${urnPosition.y}px`,
+            left: `${urnPosition.x}px`,
+            transform: "translate(-50%, -50%)",
+            fontSize: `${urnFontSize}px`,
+            fontWeight: "bold",
+            color: "#000",
+            whiteSpace: "nowrap",
+            textAlign: "center"
+          }}
+        >
           {currentURN}
         </p>
       </div>
 
-      {/* Right side: Controls */}
       <div className="controls-container">
         <div className="upload-bg">
           <label>Upload Certificate Background:</label>
@@ -199,7 +218,6 @@ function App() {
               value={nameFontSize}
               onChange={(e) => setNameFontSize(parseInt(e.target.value))}
             />
-            <span>{nameFontSize}px</span>
           </label>
 
           <label>
@@ -211,7 +229,6 @@ function App() {
               value={urnFontSize}
               onChange={(e) => setUrnFontSize(parseInt(e.target.value))}
             />
-            <span>{urnFontSize}px</span>
           </label>
         </div>
 
@@ -221,7 +238,9 @@ function App() {
             <input
               type="number"
               value={namePosition.x}
-              onChange={(e) => setNamePosition({ ...namePosition, x: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setNamePosition({ ...namePosition, x: parseInt(e.target.value) })
+              }
             />
           </label>
 
@@ -230,7 +249,9 @@ function App() {
             <input
               type="number"
               value={namePosition.y}
-              onChange={(e) => setNamePosition({ ...namePosition, y: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setNamePosition({ ...namePosition, y: parseInt(e.target.value) })
+              }
             />
           </label>
 
@@ -239,7 +260,9 @@ function App() {
             <input
               type="number"
               value={urnPosition.x}
-              onChange={(e) => setUrnPosition({ ...urnPosition, x: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setUrnPosition({ ...urnPosition, x: parseInt(e.target.value) })
+              }
             />
           </label>
 
@@ -248,7 +271,9 @@ function App() {
             <input
               type="number"
               value={urnPosition.y}
-              onChange={(e) => setUrnPosition({ ...urnPosition, y: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setUrnPosition({ ...urnPosition, y: parseInt(e.target.value) })
+              }
             />
           </label>
         </div>
