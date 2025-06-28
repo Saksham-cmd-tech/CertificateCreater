@@ -17,15 +17,22 @@ function App() {
   const [canvasWidth, setCanvasWidth] = useState(1000);
   const [canvasHeight, setCanvasHeight] = useState(700);
   const [namePosition, setNamePosition] = useState({ x: 500, y: 350 }); // center x
-  const [urnPosition, setUrnPosition] = useState({ x: 500, y: 640 });  // center x
+  const [urnPosition, setUrnPosition] = useState({ x: 500, y: 640 }); // center x
+  const [showTeam, setShowTeam] = useState(false);
 
-  const currentName = names[index]?.name || "No more names";
-  const currentTeam = names[index]?.team || "No more teams";
-  const currentURN = names[index]?.urn || "No more uid";
+  const currentName = names[index]?.name || "name";
+  const currentTeam = names[index]?.team || "team";
+  const currentURN = names[index]?.urn || "urn";
 
   const nextName = () => {
     if (index < names.length - 1) {
       setIndex(index + 1);
+    }
+  };
+
+  const previousName = () => {
+    if (index > 0) {
+      setIndex(index - 1);
     }
   };
 
@@ -72,7 +79,11 @@ function App() {
 
       const h1 = document.createElement("h1");
       h1.className = "name";
-      h1.innerText = `${name} (${team})`;
+      if (showTeam) {
+        h1.innerText = `${name} (${team})`;
+      } else {
+        h1.innerText = name;
+      }
       Object.assign(h1.style, {
         position: "absolute",
         top: `${namePosition.y}px`,
@@ -82,7 +93,7 @@ function App() {
         fontWeight: "bold",
         color: "#000",
         whiteSpace: "nowrap",
-        textAlign: "center"
+        textAlign: "center",
       });
 
       const p = document.createElement("p");
@@ -97,7 +108,7 @@ function App() {
         fontWeight: "bold",
         color: "#000",
         whiteSpace: "nowrap",
-        textAlign: "center"
+        textAlign: "center",
       });
 
       tempDiv.appendChild(h1);
@@ -160,7 +171,7 @@ function App() {
           backgroundImage: `url(${customBg || certificateBg})`,
           width: `${canvasWidth}px`,
           height: `${canvasHeight}px`,
-          position: "relative"
+          position: "relative",
         }}
       >
         <h1
@@ -174,10 +185,10 @@ function App() {
             fontWeight: "bold",
             color: "#000",
             whiteSpace: "nowrap",
-            textAlign: "center"
+            textAlign: "center",
           }}
         >
-          {currentName} ({currentTeam})
+          {showTeam ? `${currentName} (${currentTeam})` : currentName}
         </h1>
         <p
           className="urn"
@@ -190,7 +201,7 @@ function App() {
             fontWeight: "bold",
             color: "#000",
             whiteSpace: "nowrap",
-            textAlign: "center"
+            textAlign: "center",
           }}
         >
           {currentURN}
@@ -200,12 +211,21 @@ function App() {
       <div className="controls-container">
         <div className="upload-bg">
           <label>Upload Certificate Background:</label>
-          <input type="file" accept="image/*" onChange={handleBackgroundChange} />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleBackgroundChange}
+          />
         </div>
 
         <div className="upload-json">
           <label>Upload Names JSON:</label>
           <input type="file" accept=".json" onChange={handleJsonUpload} />
+        </div>
+
+        <div>
+          <input type="checkbox" name="show-team" id="show-team" checked={showTeam} onChange={(e) => setShowTeam(e.target.checked)} />
+          <label htmlFor="show-team">Show Team Name</label>
         </div>
 
         <div className="font-controls">
@@ -239,7 +259,10 @@ function App() {
               type="number"
               value={namePosition.x}
               onChange={(e) =>
-                setNamePosition({ ...namePosition, x: parseInt(e.target.value) })
+                setNamePosition({
+                  ...namePosition,
+                  x: parseInt(e.target.value),
+                })
               }
             />
           </label>
@@ -250,7 +273,10 @@ function App() {
               type="number"
               value={namePosition.y}
               onChange={(e) =>
-                setNamePosition({ ...namePosition, y: parseInt(e.target.value) })
+                setNamePosition({
+                  ...namePosition,
+                  y: parseInt(e.target.value),
+                })
               }
             />
           </label>
@@ -279,11 +305,16 @@ function App() {
         </div>
 
         <div className="buttons">
-          <button onClick={handleSingleDownload}>Download Current Certificate</button>
+          <button onClick={handleSingleDownload}>
+            Download Current Certificate
+          </button>
           <button onClick={handleBulkDownload} disabled={isGenerating}>
             {isGenerating ? "Generating..." : "Download All as ZIP"}
           </button>
-          <button onClick={nextName}>Next Name</button>
+          <div className="navigation-buttons">
+            <button onClick={previousName}>Previous</button>
+            <button onClick={nextName}>Next</button>
+          </div>
         </div>
       </div>
     </div>

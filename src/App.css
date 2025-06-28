@@ -1,19 +1,15 @@
-/* Global Styles */
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
-  background-color: #121212; /* Dark background */
-  color: #f0f0f0; /* Light text */
-  overflow: hidden;
+  background-color: #121212;
+  color: #f0f0f0;
 }
 
 .app {
   display: flex;
-  flex-direction: row; /* Align controls to the right and canvas to the left */
-  /* justify-content: space-between; */
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
   gap: 2rem;
   min-height: 100vh;
 }
@@ -27,7 +23,7 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 300px; /* Controls are restricted to a smaller width */
+  max-width: 300px;
 }
 
 .upload-bg,
@@ -39,17 +35,21 @@ body {
 .upload-json label {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
-  color: #e0e0e0; /* Slightly lighter text color */
+  color: #e0e0e0;
 }
 
 .upload-bg input,
 .upload-json input {
   padding: 0.8rem;
   border-radius: 5px;
-  border: 1px solid #444; /* Lighter border for better contrast */
-  background-color: #333; /* Dark background for inputs */
-  color: #f0f0f0; /* Light text */
+  border: 1px solid #444;
+  background-color: #333;
+  color: #f0f0f0;
   width: 100%;
+}
+
+.font-controls {
+  align-items: flex-start;
 }
 
 .font-controls label {
@@ -80,7 +80,7 @@ body {
 
 .search button {
   padding: 0.7rem 1.5rem;
-  background-color: #e5193d; /* Bright accent color */
+  background-color: #ff5722;
   color: white;
   border: none;
   border-radius: 5px;
@@ -89,7 +89,7 @@ body {
 }
 
 .search button:hover {
-  background-color: #ad1531; /* Darker shade on hover */
+  background-color: #d4431b;
 }
 
 .certificate {
@@ -99,7 +99,7 @@ body {
   background-position: center;
   position: relative;
   border: 1px solid #333;
-  background-color: #222; /* Slightly darker background for certificate area */
+  background-color: #222;
 }
 
 .buttons {
@@ -108,7 +108,7 @@ body {
 
 .buttons button {
   padding: 0.7rem 1.5rem;
-  background-color: #e5193d; /* Light cyan for action buttons */
+  background-color: #e5193d;
   color: white;
   border: none;
   border-radius: 5px;
@@ -118,7 +118,7 @@ body {
 }
 
 .buttons button:hover {
-  background-color: #ad1531; /* Darker cyan on hover */
+  background-color: #ad1531;
 }
 
 .buttons button:disabled {
@@ -132,7 +132,6 @@ body {
   height: 100%;
 }
 
-/* Flex layout for positioning controls on the right */
 .controls-container {
   display: flex;
   flex-direction: column;
@@ -141,7 +140,6 @@ body {
   width: 300px;
 }
 
-/* Text area for name and urn */
 .name,
 .urn {
   position: absolute;
@@ -152,30 +150,27 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #000000; /* Light text */
+  color: #000000;
 }
 
-/* Adjust name styles */
 .name {
   top: 0px;
   left: 0px;
   font-weight: bold;
-  font-size: 30px; /* Ensure default font size */
-  color: #000; /* Lighter text color for better contrast */
-  text-align: center; /* Center the name */
+  font-size: 30px;
+  color: #000;
+  text-align: center;
 }
 
-/* Adjust urn styles */
 .urn {
   bottom: 0px;
   left: 0px;
   font-weight: bold;
-  font-size: 16px; /* Ensure default font size */
-  color: #000; /* Lighter text color for better contrast */
-  text-align: center; /* Center the urn text */
+  font-size: 16px;
+  color: #000;
+  text-align: center;
 }
 
-/* Additional styles for better visual hierarchy */
 input[type="file"]::file-selector-button {
   background-color: #ff5722;
   color: white;
@@ -188,35 +183,27 @@ input[type="file"]:hover::file-selector-button {
   background-color: #d4431b;
 }
 
-.search button {
-  padding: 0.7rem 1.5rem;
-  background-color: #ff5722;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 1rem;
-}
-
-.search button:hover {
-  background-color: #d4431b;
-}
-
-
-.position-controls{
+.position-controls {
   display: flex;
   flex-direction: column;
   width: fit-content;
 }
 
-.position-controls label input{
-    width: 80px;
-    padding: 0.5rem;
-    border-radius: 5px;
-    border: 1px solid #444;
-    background-color: #333;
-    color: #f0f0f0;
-    margin-top: 0.5rem;
-    text-align: center;
-    margin-left: 10px;
+.position-controls label input {
+  width: 80px;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background-color: #333;
+  color: #f0f0f0;
+  margin-top: 0.5rem;
+  text-align: center;
+  margin-left: 10px;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 1rem;
 }
