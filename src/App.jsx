@@ -65,6 +65,8 @@ function App() {
     reader.readAsText(file);
   };
 
+  
+
   const renderCertificate = (name, team, urn) => {
     return new Promise((resolve) => {
       const tempDiv = document.createElement("div");
