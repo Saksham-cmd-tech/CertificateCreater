@@ -18,7 +18,7 @@ certificate-app/
 │   ├── App.jsx             # Main App component
 │   ├── index.css           # Global styles
 │   ├── main.jsx            # Entry point for Vite
-├── webicons/               # Optional: Web fonts, icons or assets
+├── webicons/               # Web icons
 ├── .gitignore              # Git ignore rules
 ├── eslint.config.js        # ESLint config
 ├── index.html              # HTML template
